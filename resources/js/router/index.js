@@ -21,11 +21,13 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
 
-    axios.get('/api/user')
+    axios.get('/api/users')
         .then( res => {
             console.log(res.data);
+            console.log(res.statusText);
         })
         .catch(e => {
+            console.log(e)
             if (e.response.status === 401) {
                 localStorage.key('x_xsrf_token') ? localStorage.removeItem('x_xsrf_token') : ''
             }

@@ -10,4 +10,9 @@ class PostImage extends Model
     use HasFactory;
 
     protected $guarded = false;
+
+    public function getUrlAttribute()
+    {
+        return url('storage/' . $this->path);
+    }
 }

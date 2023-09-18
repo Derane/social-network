@@ -8,5 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class Post extends Model
 {
     use HasFactory;
+
     protected $guarded = false;
+
+    public function image()
+    {
+        return $this->hasOne(PostImage::class)
+            ->where('is_active');
+    }
 }
