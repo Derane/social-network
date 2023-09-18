@@ -10,10 +10,9 @@ class Post extends Model
     use HasFactory;
 
     protected $guarded = false;
-
+    protected $with = ['image'];
     public function image()
     {
-        return $this->hasOne(PostImage::class)
-            ->where('is_active');
+        return $this->hasOne(PostImage::class);
     }
 }

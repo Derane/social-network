@@ -1,55 +1,99 @@
 <template>
     <div class="w-96 mx-auto">
+        <Stat :stats="stats"></Stat>
+        <div class="mb-4">
+            <div class=" mb-3">
+                <input v-model="title" class="w-96 rounded-3xl border p-2 border-slate-300" type="text"
+                       placeholder="title">
+                <div v-if="errors.title">
+                    <p v-for="error in errors.title" class="text-sm mt-2 text-red-500">{{ error }}</p>
+                </div>
+            </div>
+            <div class=" mb-3">
+                <textarea v-model="content" class="w-96 rounded-3xl border p-2 border-slate-300"
+                          placeholder="content"></textarea>
+                <div v-if="errors.content">
+                    <p v-for="error in errors.content" class="text-sm mb-2 text-red-500">{{ error }}</p>
+                </div>
+            </div>
+            <div class="flex mb-3 items-center">
+                <div>
+                    <input @change="storeImage" ref="file" type="file" class="hidden">
+                    <a href="#" class="block p-2 w-16 text-center text-sm rounded-3xl bg-sky-500 text-white"
+                       @click.prevent="selectFile()">Image</a>
+                </div>
+                <div>
+                    <a v-if="image" @click.prevent="image = null" class="ml-3" href="#">Cancel</a>
+                </div>
+            </div>
+            <div v-if="image">
+                <img :src="image.url" alt="preview">
+            </div>
+            <div>
+                <a @click.prevent="store" href="#" class="block p-2 w-32 text-center rounded-3xl bg-green-600 text-white
+                hover:bg-white hover:border hover:border-green-600 hover:text-green-600 box-border ml-auto">Publish</a>
+            </div>
+        </div>
 
-        <div>
-            <input v-model="title" class="w-96 mb-3 rounded-3xl border p-2 border-slate-400" type="text"
-                   placeholder="title">
-        </div>
-        <div>
-            <textarea v-model="content" class="w-96 rounded-3xl mb-3 border p-2 border-slate-400" type="text"
-                      placeholder="content"></textarea>
-        </div>
-        <div class="flex mb-3 items-center">
-            <div>
-                <input @change="storeImage" ref="file" type="file" class="hidden">
-                <a href="#" class="block p-2 w-16 text-center text-sm rounded-3xl bg-sky-500 text-white"
-                   @click.prevent="selectFile()">Image</a>
-            </div>
-            <div>
-                <a v-if="image" @click.prevent="setImageNull" class="ml-3" href="#">Cancel</a>
+        <div v-if="posts">
+            <h1 class="mb-8 pb-8 border-b border-gray-400">Posts</h1>
+            <div v-for="post in posts" class="mb-8 pb-8 border-b border-gray-400">
+                <h1>{{post.title}}</h1>
+                <img v-if="post.image_url" :src="post.image_url" :alt="post.title"/>
+                <p>{{post.content}}</p>
             </div>
         </div>
-        <div v-if="image != null">
-            <img :src="image.url" alt="preview">
-        </div>
-        <div>
-            <a href="#" @click.prevent="store"
-               class="block p-2 w-32 rounded-3xl text-center bg-blue-700 text-white hover:border
-               hover:bg-white hover:bord-bg-blue-700 hover:text-blue-700 ml-auto">
-                Publish</a>
-        </div>
+
     </div>
 </template>
+
 <script>
 export default {
     name: "Personal",
+
+    data() {
+        return {
+            title: '',
+            content: '',
+            image: null,
+            posts: [],
+            errors: [],
+            stats: []
+        }
+    },
+
+    mounted() {
+        this.getPosts()
+    },
+
     methods: {
-        data() {
-            return {
-                title: '',
-                content: '',
-                image: ''
-            }
-        },
-        store() {
-            const id = this.image ? this.image : null;
-            axios.post('/api/posts', {title: this.title, content: this.content, image_id: id})
-                .then(res => {
-                    console.log(res);
+
+        getStats() {
+            axios.post('/api/users/stats', { user_id: null})
+                .then( res => {
+                    this.stats = res.data.data
                 })
         },
-        setImageNull() {
-            this.image = null
+
+        getPosts() {
+            axios.get('/api/posts')
+                .then(res => {
+                    this.posts = res.data.data
+                })
+        },
+
+        store() {
+            const id = this.image ? this.image.id : null
+            axios.post('/api/posts', {title: this.title, content: this.content, image_id: id})
+                .then(res => {
+                    this.title = ''
+                    this.content = ''
+                    this.image = null
+                    this.posts.unshift(res.data.data)
+                })
+                .catch( e => {
+                    this.errors = e.response.data.errors
+                })
         },
         selectFile() {
             this.fileInput = this.$refs.file;
@@ -64,12 +108,13 @@ export default {
             axios.post('/api/post-images', formData)
                 .then(res => {
                     this.image = res.data.data
-                    console.log(this.image);
                 })
         }
+
     }
 }
 </script>
+
 <style scoped>
 
 </style>

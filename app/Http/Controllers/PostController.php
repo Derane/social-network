@@ -9,6 +9,10 @@ use App\Models\PostImage;
 use Illuminate\Support\Facades\DB;
 class PostController extends Controller
 {
+    public function index()
+    {  // return json_encode(Post::where('user_id', auth()->id())->get());
+        return PostResource::collection(Post::where('user_id', auth()->id())->get());
+    }
     public function store(StoreRequest $storeRequest)
     {
         try {
@@ -20,7 +24,7 @@ class PostController extends Controller
             $post = Post::create($data);
             $this->processImage($imageId, $post);
             PostImage::clearStorage();
-            DB::commit();;
+            DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
