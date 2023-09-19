@@ -22,6 +22,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/users', [\App\Http\Controllers\UserController::class, 'index']);
     Route::get('/users/{user}/posts', [\App\Http\Controllers\UserController::class, 'post']);
+    Route::get('/users/{user}/toggle-following', [\App\Http\Controllers\UserController::class, 'toggleFollowing']);
     Route::get('/posts', [PostController::class, 'index']);
     Route::post('/posts', [PostController::class, 'store']);
     Route::post('/post-images', [\App\Http\Controllers\PostImageController::class, 'store']);

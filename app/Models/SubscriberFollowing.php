@@ -10,4 +10,6 @@ class SubscriberFollowing extends Model
     use HasFactory;
 
     protected $guarded = false;
+    protected $table = 'subscriber_followings';
+
 }
