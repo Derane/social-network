@@ -22,7 +22,6 @@ export default {
             password: null,
         }
     },
-
     methods: {
         login() {
             axios.get('/sanctum/csrf-cookie')

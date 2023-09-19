@@ -37,17 +37,15 @@
 
         <div v-if="posts">
             <h1 class="mb-8 pb-8 border-b border-gray-400">Posts</h1>
-            <div v-for="post in posts" class="mb-8 pb-8 border-b border-gray-400">
-                <h1>{{post.title}}</h1>
-                <img v-if="post.image_url" :src="post.image_url" :alt="post.title"/>
-                <p>{{post.content}}</p>
-            </div>
+            <Post v-for="post in posts" :post="post"></Post>
         </div>
 
     </div>
 </template>
 
 <script>
+import Post from "../../components/Post.vue";
+
 export default {
     name: "Personal",
 
@@ -61,7 +59,9 @@ export default {
             stats: []
         }
     },
-
+    components: {
+        Post
+    },
     mounted() {
         this.getPosts()
     },
@@ -69,8 +69,8 @@ export default {
     methods: {
 
         getStats() {
-            axios.post('/api/users/stats', { user_id: null})
-                .then( res => {
+            axios.post('/api/users/stats', {user_id: null})
+                .then(res => {
                     this.stats = res.data.data
                 })
         },
@@ -91,7 +91,7 @@ export default {
                     this.image = null
                     this.posts.unshift(res.data.data)
                 })
-                .catch( e => {
+                .catch(e => {
                     this.errors = e.response.data.errors
                 })
         },
