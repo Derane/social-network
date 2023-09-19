@@ -8,8 +8,12 @@ const router = createRouter({
             name: 'user.index'
         },
         {
-            path: '/users/:id', component: () => import('../views/user/Show.vue'),
+            path: '/users/:id/show', component: () => import('../views/user/Show.vue'),
             name: 'user.show'
+        },
+        {
+            path: '/users/feed', component: () => import('../views/user/Feed.vue'),
+            name: 'user.feed'
         },
         {
             path: '/users/login', component: () => import('../views/user/Login.vue'),

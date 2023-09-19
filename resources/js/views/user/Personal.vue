@@ -36,7 +36,6 @@
         </div>
 
         <div v-if="posts">
-            <h1 class="mb-8 pb-8 border-b border-gray-400">Posts</h1>
             <Post v-for="post in posts" :post="post"></Post>
         </div>
 
