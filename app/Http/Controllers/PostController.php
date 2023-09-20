@@ -4,13 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Post\StoreRequest;
 use App\Http\Resources\Post\PostResource;
-use App\Http\Resources\User\UserResource;
 use App\Models\LikedPost;
 use App\Models\Post;
 use App\Models\PostImage;
-use App\Models\SubscriberFollowing;
-use App\Models\User;
 use Illuminate\Support\Facades\DB;
+
 class PostController extends Controller
 {
     public function index()
@@ -18,12 +16,13 @@ class PostController extends Controller
         $posts = Post::where('user_id', auth()->id())->get();
         $likedPostIds = LikedPost::where('user_id', auth()->id())->get('post_id')->pluck('post_id')->toArray();
         foreach ($posts as $post) {
-            if(in_array($post->id, $likedPostIds)) {
+            if (in_array($post->id, $likedPostIds)) {
                 $post->is_liked = true;
             }
         }
         return PostResource::collection($posts);
     }
+
     public function store(StoreRequest $storeRequest)
     {
         try {
@@ -39,7 +38,7 @@ class PostController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
-               'error' => $e->getMessage(),
+                'error' => $e->getMessage(),
             ]);
         }
 
@@ -65,6 +64,7 @@ class PostController extends Controller
     {
         $res = auth()->user()->likedPosts()->toggle($post->id);
         $data['is_liked'] = count($res['attached']) > 0;
+        $data['likes_count'] = $post->likedUsers()->count();
         return $data;
     }
 }
