@@ -44,7 +44,7 @@
 
 <script>
 import Post from "../../components/Post.vue";
-
+import Stat from "../../components/Stat.vue";
 export default {
     name: "Personal",
 
@@ -59,10 +59,12 @@ export default {
         }
     },
     components: {
-        Post
+        Post,
+        Stat
     },
     mounted() {
         this.getPosts()
+        this.getStats()
     },
 
     methods: {

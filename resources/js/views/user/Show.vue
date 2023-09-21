@@ -1,6 +1,6 @@
 <template>
     <div class="w-96 mx-auto">
-
+        <Stat :stats="stats"></Stat>
         <div v-if="posts">
             <Post v-for="post in posts" :post="post"></Post>
         </div>
@@ -10,7 +10,7 @@
 
 <script>
 import Post from "../../components/Post.vue";
-
+import Stat from "../../components/Stat.vue";
 export default {
     name: "Personal",
 
@@ -18,16 +18,25 @@ export default {
         return {
             posts: [],
             userId: this.$route.params.id,
+            stats: []
         }
     },
 
     mounted() {
         this.getPosts()
+        this.getStats()
     },
     components: {
         Post
     },
     methods: {
+
+        getStats() {
+            axios.post('/api/users/stats', {user_id: this.userId})
+                .then(res => {
+                    this.stats = res.data.data
+                })
+        },
 
         getPosts() {
             axios.get(`/api/users/${this.userId}/posts`)

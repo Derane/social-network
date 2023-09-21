@@ -22,8 +22,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/users', [\App\Http\Controllers\UserController::class, 'index']);
     Route::get('/users/{user}/posts', [\App\Http\Controllers\UserController::class, 'post']);
-    Route::get('/users/{user}/toggle-following', [\App\Http\Controllers\UserController::class, 'toggleFollowing']);
+    Route::post('/users/{user}/toggle-following', [\App\Http\Controllers\UserController::class, 'toggleFollowing']);
     Route::get('/users/followed-posts', [\App\Http\Controllers\UserController::class, 'followedPosts']);
+    Route::post('/users/stats', [\App\Http\Controllers\UserController::class, 'stat']);
 
     Route::get('/posts', [PostController::class, 'index']);
     Route::post('/posts', [PostController::class, 'store'])->name('posts.store');

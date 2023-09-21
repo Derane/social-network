@@ -11,7 +11,7 @@
                     <a @click.prevent="toggleFollowing(user)" :class="['block p-2 w-32 text-center rounded-3xl',
                     user.is_followed
                     ? 'bg-white text-sky-500 border border-blue-500'
-                    : 'bg-green-600 text-white']" href="#">Follow</a>
+                    : 'bg-green-600 text-white']" href="#">{{ user.is_followed ? 'Unfollow' : 'Follow' }}</a>
                 </div>
             </div>
         </div>
@@ -39,7 +39,7 @@ export default {
                 })
         },
         toggleFollowing(user) {
-                axios.get(`/api/users/${user.id}/toggle-following`)
+                axios.post(`/api/users/${user.id}/toggle-following`)
                     .then(res => {
                         user.is_followed = res.data.is_followed;
                     })
