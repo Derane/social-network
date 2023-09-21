@@ -21,7 +21,8 @@ class PostResource extends JsonResource
             'image_url' => isset($this->image) ? $this->image->url : null,
             'is_liked' => $this->is_liked ?? false,
             'likes_count' => $this->likedUsers->count(),
-            'reposted_post' => new RepostedPostResource($this->repostedPost)
+            'reposted_post' => new RepostedPostResource($this->repostedPost),
+            'comments_count' => $this->comments_count
         ];
     }
 }

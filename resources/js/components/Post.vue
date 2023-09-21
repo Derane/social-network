@@ -11,6 +11,8 @@ export default {
             body: '',
             is_repost: false,
             repostedId: null,
+            comments: [],
+            isShowed: false
         }
     },
     methods: {
@@ -43,9 +45,18 @@ export default {
             })
                 .then(res => {
                     this.body = ''
+                    this.comments.unshift(res.data.data)
+                    post.comments_count++;
                     console.log(res);
                 })
         },
+        getComments(post) {
+            axios.get(`/api/posts/${post.id}/comment`)
+                .then(res => {
+                        this.comments = res.data.data
+                        this.isShowed = true
+                })
+        }
     }
 }
 </script>
@@ -102,6 +113,16 @@ export default {
 
                 </div>
 
+            </div>
+        </div>
+        <div v-if="post.comments_count > 0" class="mt-4">
+            <p v-if="!isShowed"  @click="getComments(post)"> Show {{ post.comments_count }} comments</p>
+            <p v-if="isShowed" @click="isShowed = false">Close</p>
+            <div v-if="comments && isShowed">
+                <div v-for="comment in comments" >
+                    <p>{{comment.user.name}}</p>
+                    <p>{{comment.body}}</p>
+                </div>
             </div>
         </div>
         <div class="mt-4">

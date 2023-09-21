@@ -10,6 +10,7 @@ class Post extends Model
     use HasFactory;
 
     protected $guarded = false;
+    protected $withCount = ['comments'];
     protected $with = ['image', 'likedUsers', 'repostedPost'];
 
     public function image()
@@ -26,5 +27,10 @@ class Post extends Model
     public function repostedPost()
     {
         return $this->belongsTo(Post::class, 'reposted_id', 'id');
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class, 'post_id', 'id');
     }
 }
