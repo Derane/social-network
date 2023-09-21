@@ -26,7 +26,7 @@ class UserController extends Controller
 
     public function post(User $user)
     {
-        $posts = $user->posts()->latest()->get();
+        $posts = $user->posts()->withCount('repostedByPost')->latest()->get();
         $this->prepareLikedPosts($posts);
         return PostResource::collection($posts);
     }
@@ -44,7 +44,7 @@ class UserController extends Controller
 
         $likedPostIds = LikedPost::where('user_id', auth()->id())->get('post_id')->pluck('post_id')->toArray();
 
-        $posts = Post::whereIn('user_id', $followedIds)->whereNotIn('id', $likedPostIds)->get();
+        $posts = Post::whereIn('user_id', $followedIds)->whereNotIn('id', $likedPostIds)->withCount('repostedByPost')->get();
         return PostResource::collection($posts);
     }
 

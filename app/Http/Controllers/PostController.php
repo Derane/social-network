@@ -17,7 +17,7 @@ class PostController extends Controller
 {
     public function index()
     {
-        $posts = Post::where('user_id', auth()->id())->get();
+        $posts = Post::where('user_id', auth()->id())->withCount('repostedByPost')->get();
         $likedPostIds = LikedPost::where('user_id', auth()->id())->get('post_id')->pluck('post_id')->toArray();
         foreach ($posts as $post) {
             if (in_array($post->id, $likedPostIds)) {
@@ -53,7 +53,7 @@ class PostController extends Controller
     {
         $data = $repostRequest->validated();
         $data['user_id'] = auth()->id();
-        $data['post_id'] = $post->id;
+        $data['reposted_id'] = $post->id;
         Post::create($data);
 
     }

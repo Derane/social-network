@@ -28,6 +28,10 @@ class Post extends Model
     {
         return $this->belongsTo(Post::class, 'reposted_id', 'id');
     }
+    public function repostedByPost()
+    {
+        return $this->hasMany(Post::class, 'reposted_id', 'id');
+    }
 
     public function comments()
     {

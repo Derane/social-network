@@ -22,7 +22,8 @@ class PostResource extends JsonResource
             'is_liked' => $this->is_liked ?? false,
             'likes_count' => $this->likedUsers->count(),
             'reposted_post' => new RepostedPostResource($this->repostedPost),
-            'comments_count' => $this->comments_count
+            'comments_count' => $this->comments_count,
+            'reposted_by_posts_count' => $this->reposted_by_posts_count ?? 0,
         ];
     }
 }
