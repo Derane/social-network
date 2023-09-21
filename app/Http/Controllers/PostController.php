@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Post\RepostRequest;
 use App\Http\Requests\Post\StoreRequest;
 use App\Http\Resources\Post\PostResource;
 use App\Models\LikedPost;
@@ -43,6 +44,15 @@ class PostController extends Controller
         }
 
         return new PostResource($post);
+    }
+
+    public function repost(RepostRequest $repostRequest, Post $post)
+    {
+        $data = $repostRequest->validated();
+        $data['user_id'] = auth()->id();
+        $data['post_id'] = $post->id;
+        Post::create($data);
+
     }
 
     /**

@@ -10,7 +10,8 @@ class Post extends Model
     use HasFactory;
 
     protected $guarded = false;
-    protected $with = ['image', 'likedUsers'];
+    protected $with = ['image', 'likedUsers', 'reposted_id'];
+
     public function image()
     {
         return $this->hasOne(PostImage::class);
@@ -22,4 +23,8 @@ class Post extends Model
 
     }
 
+    public function repostedPost()
+    {
+        return $this->belongsTo(Post::class, 'reposted_id', 'id');
+    }
 }
