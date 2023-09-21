@@ -15,9 +15,11 @@ class CommentResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $name =  isset($this->parent) ? $this->parent->user->name : null;
         return [
             'id' => $this->id,
             'body' => $this->body,
+            'answered_for_users' => $name,
             'user' => new UserResource($this->user),
         ];
     }

@@ -12,7 +12,9 @@ export default {
             is_repost: false,
             repostedId: null,
             comments: [],
-            isShowed: false
+            isShowed: false,
+            parentId: null,
+            comment: null,
         }
     },
     methods: {
@@ -41,21 +43,26 @@ export default {
         },
         storeComment(post) {
             axios.post(`/api/posts/${post.id}/comment`, {
-                body: this.body
+                body: this.body,
+                parent_id: this.comment.id
             })
                 .then(res => {
                     this.body = ''
                     this.comments.unshift(res.data.data)
+                    this.comment = null
                     post.comments_count++;
-                    console.log(res);
+                    this.isShowed = true
                 })
         },
         getComments(post) {
             axios.get(`/api/posts/${post.id}/comment`)
                 .then(res => {
-                        this.comments = res.data.data
-                        this.isShowed = true
+                    this.comments = res.data.data
+                    this.isShowed = true
                 })
+        },
+        setParentId(comment) {
+            this.comment = comment
         }
     }
 }
@@ -95,7 +102,7 @@ export default {
                         <path stroke-linecap="round" stroke-linejoin="round"
                               d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z"/>
                     </svg>
-                    <p>{{ post.reposted_by_posts_count}}</p>
+                    <p>{{ post.reposted_by_posts_count }}</p>
                 </div>
                 <div v-if="is_repost" class="mt-3">
                     <div class="mb-3">
@@ -116,21 +123,34 @@ export default {
             </div>
         </div>
         <div v-if="post.comments_count > 0" class="mt-4">
-            <p v-if="!isShowed"  @click="getComments(post)"> Show {{ post.comments_count }} comments</p>
+            <p v-if="!isShowed" @click="getComments(post)"> Show {{ post.comments_count }} comments</p>
             <p v-if="isShowed" @click="isShowed = false">Close</p>
             <div v-if="comments && isShowed">
-                <div v-for="comment in comments" >
-                    <p>{{comment.user.name}}</p>
-                    <p>{{comment.body}}</p>
+                <div v-for="comment in comments">
+                    <div class="flex">
+
+
+                        <p class="text-sm mb-2">{{ comment.user.name }}</p>
+                        <p @click="setParentId(comment)" class="text-sm text-sky-500 cursor-pointer">Answer</p>
+                    </div>
+                    <p><span v-if="comment.answered_for_users" class="text-sky-500"> {{ comment.answered_for_users ? comment.answered_for_users : ''}},</span> {{ comment.body }}</p>
                 </div>
             </div>
         </div>
         <div class="mt-4">
-            <input v-model="body" class="w-96 rounded-3xl border p-2 border-slate-300" type="text"
-                   placeholder="title">
-            <div>
-                <a @click.prevent="storeComment(post)" href="#" class="block p-2 w-32 text-center rounded-3xl bg-green-600 text-white
+            <div class="mb-3">
+                <div class="flex items-center">
+                    <p v-if="comment" class="mr-2">
+                        Answered for {{ comment.user.name }}
+                    </p>
+                    <p @click="comment = null" class="cursor-pointer text-sm text-sky-500" v-if="comment">Cancel</p>
+                </div>
+                <input v-model="body" class="w-96 rounded-3xl border p-2 border-slate-300" type="text"
+                       placeholder="title">
+                <div>
+                    <a @click.prevent="storeComment(post)" href="#" class="block p-2 w-32 text-center rounded-3xl bg-green-600 text-white
                 hover:bg-white hover:border hover:border-green-600 hover:text-green-600 box-border ml-auto">Comment</a>
+                </div>
             </div>
         </div>
     </div>
