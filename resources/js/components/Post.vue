@@ -8,8 +8,9 @@ export default {
         return {
             title: '',
             content: '',
+            body: '',
             is_repost: false,
-            repostedId: null
+            repostedId: null,
         }
     },
     methods: {
@@ -35,8 +36,16 @@ export default {
                     this.title = ''
                     this.content = ''
                 })
-        }
-
+        },
+        storeComment(post) {
+            axios.post(`/api/posts/${post.id}/comment`, {
+                body: this.body
+            })
+                .then(res => {
+                    this.body = ''
+                    console.log(res);
+                })
+        },
     }
 }
 </script>
@@ -49,7 +58,8 @@ export default {
         <p>{{ post.content }}</p>
         <div v-if="post.reposted_post" class="bg-gray-100 p-4 my-4 border border-gray-200">
             <h1>{{ post.reposted_post.title }}</h1>
-            <img class="my-3 mx-auto" v-if="post.reposted_post.image_url" :src="post.reposted_post.image_url" :alt="post.reposted_post.title"/>
+            <img class="my-3 mx-auto" v-if="post.reposted_post.image_url" :src="post.reposted_post.image_url"
+                 :alt="post.reposted_post.title"/>
             <p>{{ post.reposted_post.content }}</p>
         </div>
         <div class="flex justify-between mt-2  items-center">
@@ -86,12 +96,20 @@ export default {
                           placeholder="content"></textarea>
                         <div>
                             <a @click.prevent="repost(post)" href="#" class="block p-2 w-32 text-center rounded-3xl bg-green-600 text-white
-                hover:bg-white hover:border hover:border-green-600 hover:text-green-600 box-border ml-auto">Publish</a>
+                hover:bg-white hover:border hover:border-green-600 hover:text-green-600 box-border ml-auto">Comment</a>
                         </div>
                     </div>
 
                 </div>
 
+            </div>
+        </div>
+        <div class="mt-4">
+            <input v-model="body" class="w-96 rounded-3xl border p-2 border-slate-300" type="text"
+                   placeholder="title">
+            <div>
+                <a @click.prevent="storeComment(post)" href="#" class="block p-2 w-32 text-center rounded-3xl bg-green-600 text-white
+                hover:bg-white hover:border hover:border-green-600 hover:text-green-600 box-border ml-auto">Comment</a>
             </div>
         </div>
     </div>

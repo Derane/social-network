@@ -10,7 +10,7 @@ class Post extends Model
     use HasFactory;
 
     protected $guarded = false;
-    protected $with = ['image', 'likedUsers', 'reposted_id'];
+    protected $with = ['image', 'likedUsers', 'repostedPost'];
 
     public function image()
     {
